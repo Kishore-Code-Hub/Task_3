@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pentest Toolkit</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .output pre {
+            font-size: 18px;
+        }
+
+        #loader {
+            font-size: 20px;
+            color: limegreen;
+            display: none;
+            text-align: center;
+        }
+
+        /* Loader Animation */
+        .loader {
+            border: 4px solid #00ff00; /* Green border */
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <h1>🛡️ Pentest Toolkit Interface</h1>
+        <form method="POST" action="/scan">
+            <label>Target IP/Domain:</label>
+            <input type="text" name="target" required>
+
+            <label>Select Module:</label>
+            <select name="action" id="module-select" required>
+                <option value="port_scan">Port Scanner</option>
+                <option value="vuln_scan">Vulnerability Scanner</option>
+                <option value="brute_force">SSH Brute Forcer</option>
+                <option value="sniff">Network Sniffer</option>
+            </select>
+
+            <!-- Dynamic Username & Password Inputs -->
+            <div id="brute-force-inputs" style="display:none;">
+                <label>Username:</label>
+                <input type="text" name="username" placeholder="Enter SSH Username">
+                <label>Password:</label>
+                <input type="password" name="password" placeholder="Enter SSH Password">
+            </div>
+
+            <button type="submit">Execute</button>
+        </form>
+
+        <!-- Loader Message -->
+        <div id="loader">
+            <span class="loader"></span> Running scan, please wait...
+        </div>
+
+        <div class="output">
+            {% if result %}
+                <h2>Result:</h2>
+                <pre>{{ result }}</pre>
+            {% else %}
+                <p>No results yet. Try executing a scan.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Show username & password fields only when Brute Force SSH is selected
+        document.getElementById("module-select").addEventListener("change", function() {
+            let bruteForceInputs = document.getElementById("brute-force-inputs");
+            bruteForceInputs.style.display = this.value === "brute_force" ? "block" : "none";
+        });
+
+        // Display loader message on form submission
+        document.querySelector("form").addEventListener("submit", function() {
+            document.getElementById("loader").style.display = "block";
+        });
+    </script>
+</body>
+</html>
